@@ -67,6 +67,36 @@ npm run dev
 npm run build
 ```
 
+## Publish to GitHub
+
+Repository name on GitHub: **`frontend-interview`** (hyphens; spaces are not allowed in repo names).
+
+This project is already a **git** repo with an initial commit on branch **`main`**. To create the remote repository and push (one-time):
+
+1. Install [GitHub CLI](https://cli.github.com/) if needed, then sign in:
+
+```bash
+gh auth login
+```
+
+Follow the prompts (browser login is typical).
+
+2. From the project folder, create the repo and push:
+
+```bash
+cd "path/to/frontend assignment"
+gh repo create frontend-interview --public --source=. --remote=origin --push
+```
+
+If `frontend-interview` already exists on your account as an **empty** repo, add the remote and push instead:
+
+```bash
+git remote add origin https://github.com/YOUR_USERNAME/frontend-interview.git
+git push -u origin main
+```
+
+Replace `YOUR_USERNAME` with your GitHub username.
+
 ## Notes
 
 - The dashboard uses static mock data and does not depend on a backend.
