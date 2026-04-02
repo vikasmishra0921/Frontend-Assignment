@@ -97,6 +97,38 @@ git push -u origin main
 
 Replace `YOUR_USERNAME` with your GitHub username.
 
+## Live site (hosting for submission)
+
+### Option A — GitHub Pages (free, same repo)
+
+After the code is on GitHub (`main`):
+
+1. Open the repo on GitHub → **Settings** → **Pages**.
+2. Under **Build and deployment** → **Source**, choose **GitHub Actions** (not “Deploy from a branch”).
+3. Push the latest `main` (or re-run the workflow under **Actions**). The workflow file is `.github/workflows/deploy-github-pages.yml`.
+
+Your site will be available at:
+
+`https://YOUR_USERNAME.github.io/frontend-interview/`
+
+(Replace `YOUR_USERNAME` and match the repo name; the app is built with `base: '/frontend-interview/'` only in CI so asset paths work under that URL.)
+
+### Option B — Vercel (free tier, often fastest)
+
+1. Sign in at [vercel.com](https://vercel.com) with GitHub.
+2. **Add New Project** → import `frontend-interview`.
+3. Defaults: **Build command** `npm run build`, **Output directory** `dist`. Deploy.
+
+You get a URL like `https://frontend-interview-xxx.vercel.app` — no GitHub Pages `base` path needed (Vercel serves the app at the domain root).
+
+### Option C — Netlify
+
+Connect the repo, set build to `npm run build` and publish directory to `dist`, then deploy.
+
+---
+
+**What to submit:** the GitHub repo link plus your **live URL** (GitHub Pages or Vercel/Netlify).
+
 ## Notes
 
 - The dashboard uses static mock data and does not depend on a backend.
