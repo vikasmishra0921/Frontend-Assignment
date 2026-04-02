@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { forwardRef, useEffect, useMemo, useState, type InputHTMLAttributes } from 'react'
+import DatePicker from 'react-datepicker'
 import {
   ArrowDownRight,
   ArrowUpRight,
   IndianRupee,
+  CalendarDays,
   CreditCard,
   Filter,
   Moon,
@@ -114,6 +116,36 @@ const formatMonth = (date: string) =>
 
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+
+const formDateToLocalDate = (ymd: string): Date | null => {
+  if (!ymd || !/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return null
+  const [y, m, d] = ymd.split('-').map(Number)
+  return new Date(y, m - 1, d, 12, 0, 0, 0)
+}
+
+const dateToYmd = (d: Date | null): string => {
+  if (!d) return ''
+  const y = d.getFullYear()
+  const mo = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${mo}-${day}`
+}
+
+const DatePickerInput = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
+  function DatePickerInput(props, ref) {
+    const { className, ...rest } = props
+    return (
+      <div className="date-picker-shell">
+        <CalendarDays size={18} className="date-picker-shell__icon" aria-hidden />
+        <input
+          {...rest}
+          ref={ref}
+          className={['date-picker-input', 'input-styled', className].filter(Boolean).join(' ')}
+        />
+      </div>
+    )
+  },
+)
 
 function App() {
   const [transactions, setTransactions] = useState<Transaction[]>(loadTransactions)
@@ -319,10 +351,12 @@ function App() {
         <div className="toolbar">
           <label className="select-field">
             <span>Role</span>
-            <select value={role} onChange={(event) => setRole(event.target.value as Role)}>
-              <option value="viewer">Viewer</option>
-              <option value="admin">Admin</option>
-            </select>
+            <span className="select-wrap">
+              <select value={role} onChange={(event) => setRole(event.target.value as Role)}>
+                <option value="viewer">Viewer</option>
+                <option value="admin">Admin</option>
+              </select>
+            </span>
           </label>
 
           <button
@@ -478,22 +512,37 @@ function App() {
                 <label>
                   <span>Title</span>
                   <input
+                    className="input-styled"
                     value={form.title}
                     onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
                     placeholder="e.g. Internet bill"
                   />
                 </label>
-                <label>
+                <label className="date-field">
                   <span>Date</span>
-                  <input
-                    type="date"
-                    value={form.date}
-                    onChange={(event) => setForm((current) => ({ ...current, date: event.target.value }))}
+                  <DatePicker
+                    selected={formDateToLocalDate(form.date)}
+                    onChange={(date: Date | null) =>
+                      setForm((current) => ({
+                        ...current,
+                        date: date ? dateToYmd(date) : current.date,
+                      }))
+                    }
+                    dateFormat="dd MMM yyyy"
+                    placeholderText="Pick a date"
+                    customInput={<DatePickerInput />}
+                    calendarClassName={
+                      theme === 'dark' ? 'finance-datepicker finance-datepicker--dark' : 'finance-datepicker'
+                    }
+                    popperClassName="finance-datepicker-popper"
+                    popperPlacement="bottom-start"
+                    showPopperArrow={false}
                   />
                 </label>
                 <label>
                   <span>Category</span>
                   <input
+                    className="input-styled"
                     value={form.category}
                     onChange={(event) => setForm((current) => ({ ...current, category: event.target.value }))}
                     list="categories"
@@ -507,6 +556,7 @@ function App() {
                 <label>
                   <span>Amount</span>
                   <input
+                    className="input-styled"
                     type="number"
                     min="1"
                     value={form.amount}
@@ -516,19 +566,22 @@ function App() {
                 </label>
                 <label>
                   <span>Type</span>
-                  <select
-                    value={form.type}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, type: event.target.value as TransactionType }))
-                    }
-                  >
-                    <option value="expense">Expense</option>
-                    <option value="income">Income</option>
-                  </select>
+                  <span className="select-wrap">
+                    <select
+                      value={form.type}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, type: event.target.value as TransactionType }))
+                      }
+                    >
+                      <option value="expense">Expense</option>
+                      <option value="income">Income</option>
+                    </select>
+                  </span>
                 </label>
                 <label className="form-grid__wide">
                   <span>Note</span>
                   <input
+                    className="input-styled"
                     value={form.note}
                     onChange={(event) => setForm((current) => ({ ...current, note: event.target.value }))}
                     placeholder="Optional note"
@@ -577,33 +630,39 @@ function App() {
 
           <label className="select-field">
             <span>Type</span>
-            <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value as 'all' | TransactionType)}>
-              <option value="all">All</option>
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-            </select>
+            <span className="select-wrap">
+              <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value as 'all' | TransactionType)}>
+                <option value="all">All</option>
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+              </select>
+            </span>
           </label>
 
           <label className="select-field">
             <span>Category</span>
-            <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)}>
-              <option value="all">All</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
+            <span className="select-wrap">
+              <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)}>
+                <option value="all">All</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </span>
           </label>
 
           <label className="select-field">
             <span>Sort</span>
-            <select value={sortBy} onChange={(event) => setSortBy(event.target.value as SortOption)}>
-              <option value="latest">Latest</option>
-              <option value="oldest">Oldest</option>
-              <option value="highest">Highest amount</option>
-              <option value="lowest">Lowest amount</option>
-            </select>
+            <span className="select-wrap">
+              <select value={sortBy} onChange={(event) => setSortBy(event.target.value as SortOption)}>
+                <option value="latest">Latest</option>
+                <option value="oldest">Oldest</option>
+                <option value="highest">Highest amount</option>
+                <option value="lowest">Lowest amount</option>
+              </select>
+            </span>
           </label>
         </div>
 

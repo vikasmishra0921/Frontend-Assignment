@@ -274,8 +274,12 @@
   min-width: 0;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 0.85rem 1rem;
+  border-radius: 18px;
+  padding: 0.85rem 1.1rem;
+  box-shadow: var(--control-shadow);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .search-field input {
@@ -285,16 +289,298 @@
   min-width: 0;
 }
 
-.select-field select,
-.transaction-form input,
-.transaction-form select {
+/* Shared “control” look — matches panels + calendar popover */
+.input-styled {
   width: 100%;
   min-width: 0;
-  border-radius: 14px;
+  border-radius: 18px;
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text-h);
-  padding: 0.85rem 1rem;
+  padding: 0.9rem 1.1rem;
+  min-height: 48px;
+  box-sizing: border-box;
+  box-shadow: var(--control-shadow);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.input-styled:hover {
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+  box-shadow: var(--control-shadow-hover);
+}
+
+.input-styled:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--control-focus-ring), var(--control-shadow-hover);
+}
+
+.input-styled:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--control-focus-ring), var(--control-shadow-hover);
+}
+
+/* Framed dropdown — same vibe as calendar card */
+.select-wrap {
+  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  position: relative;
+  display: block;
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--control-shadow);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.select-wrap:hover {
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+  box-shadow: var(--control-shadow-hover);
+}
+
+.select-wrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--control-focus-ring), var(--control-shadow-hover);
+}
+
+/* Accent pill behind the chevron (like a soft chip) */
+.select-wrap::before {
+  content: '';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+  pointer-events: none;
+  z-index: 0;
+  transition: background 0.2s ease;
+}
+
+.select-wrap:hover::before {
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface));
+}
+
+.select-wrap select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  cursor: pointer;
+  border: none;
+  border-radius: 18px;
+  background: transparent;
+  color: var(--text-h);
+  padding: 0.65rem 3.35rem 0.65rem 1.1rem;
+  font: inherit;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+  box-shadow: none;
+}
+
+.select-wrap select:focus {
+  outline: none;
+}
+
+.select-wrap select option {
+  font-weight: 450;
+  background: var(--surface);
+  color: var(--text-h);
+  padding: 0.5rem;
+}
+
+.select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 21px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  z-index: 1;
+  background: var(--accent);
+  opacity: 0.85;
+  -webkit-mask: var(--select-chevron) center / contain no-repeat;
+  mask: var(--select-chevron) center / contain no-repeat;
+}
+
+/* react-datepicker wraps custom input */
+.react-datepicker-wrapper {
+  display: block;
+  width: 100%;
+}
+
+.date-picker-shell {
+  position: relative;
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--control-shadow);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.date-picker-shell:hover {
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+  box-shadow: var(--control-shadow-hover);
+}
+
+.date-picker-shell:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--control-focus-ring), var(--control-shadow-hover);
+}
+
+.date-picker-shell__icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent);
+  opacity: 0.75;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.date-picker-shell .input-styled {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  min-height: 48px;
+}
+
+.date-picker-shell .input-styled:hover {
+  box-shadow: none;
+}
+
+.date-picker-shell .input-styled:focus,
+.date-picker-shell .input-styled:focus-visible {
+  box-shadow: none;
+}
+
+.date-picker-input {
+  padding-left: 2.75rem;
+  cursor: pointer;
+}
+
+.date-field .react-datepicker-wrapper {
+  width: 100%;
+}
+
+/* Calendar popper — light */
+.finance-datepicker.react-datepicker {
+  font-family: inherit;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.finance-datepicker .react-datepicker__header {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border-bottom: 1px solid var(--border);
+  border-radius: 18px 18px 0 0;
+  padding-top: 0.75rem;
+}
+
+.finance-datepicker .react-datepicker__current-month {
+  color: var(--text-h);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding-bottom: 0.5rem;
+}
+
+.finance-datepicker .react-datepicker__day-name {
+  color: var(--muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.finance-datepicker .react-datepicker__day {
+  color: var(--text-h);
+  border-radius: 10px;
+  line-height: 2rem;
+  margin: 0.15rem;
+  transition: background 0.15s ease;
+}
+
+.finance-datepicker .react-datepicker__day:hover {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.finance-datepicker .react-datepicker__day--selected,
+.finance-datepicker .react-datepicker__day--keyboard-selected {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+
+.finance-datepicker .react-datepicker__day--today {
+  font-weight: 700;
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.finance-datepicker .react-datepicker__day--outside-month {
+  color: var(--muted);
+  opacity: 0.55;
+}
+
+.finance-datepicker .react-datepicker__navigation {
+  top: 12px;
+  border-radius: 12px;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.finance-datepicker .react-datepicker__navigation:hover {
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+  box-shadow: var(--control-shadow-hover);
+}
+
+.finance-datepicker .react-datepicker__navigation:active {
+  transform: scale(0.96);
+}
+
+.finance-datepicker .react-datepicker__navigation:focus-visible {
+  outline: none;
+  box-shadow: var(--control-focus-ring);
+}
+
+.finance-datepicker .react-datepicker__navigation-icon::before {
+  border-color: var(--text-h);
+}
+
+.finance-datepicker-popper {
+  z-index: 50 !important;
+}
+
+.finance-datepicker--dark.react-datepicker {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.finance-datepicker--dark .react-datepicker__header {
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+}
+
+.finance-datepicker--dark .react-datepicker__day--outside-month {
+  opacity: 0.45;
 }
 
 .theme-toggle,
@@ -302,7 +588,7 @@
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text-h);
-  border-radius: 14px;
+  border-radius: 18px;
   padding: 0.85rem 1rem;
   display: inline-flex;
   align-items: center;
@@ -311,6 +597,27 @@
   cursor: pointer;
   min-height: 44px;
   touch-action: manipulation;
+  box-shadow: var(--control-shadow);
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease,
+    filter 0.2s ease;
+}
+
+.theme-toggle:hover,
+.button:not(.button--primary):not(.button--danger):hover {
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+  box-shadow: var(--control-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.theme-toggle:active,
+.button:not(.button--primary):not(.button--danger):active {
+  transform: translateY(0);
+  box-shadow: var(--control-shadow);
 }
 
 .button--compact {
@@ -331,10 +638,79 @@
   background: rgba(239, 68, 68, 0.12);
 }
 
+.button--danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(220, 38, 38, 0.55);
+  color: #b91c1c;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.28);
+  transform: translateY(-1px);
+}
+
+.button--danger:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(220, 38, 38, 0.22);
+}
+
+:root[data-theme='dark'] .button--danger:hover {
+  background: rgba(239, 68, 68, 0.26);
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.55);
+  box-shadow: 0 4px 22px rgba(248, 113, 113, 0.22);
+}
+
+:root[data-theme='dark'] .button--danger:active {
+  box-shadow: 0 2px 12px rgba(248, 113, 113, 0.18);
+}
+
 .button--primary {
   background: var(--accent);
   color: white;
   border-color: transparent;
+  box-shadow: 0 4px 16px rgba(109, 94, 252, 0.28);
+}
+
+.button--primary:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 6px 24px rgba(109, 94, 252, 0.42);
+  transform: translateY(-1px);
+}
+
+.button--primary:active {
+  filter: brightness(0.96);
+  transform: translateY(0);
+  box-shadow: 0 3px 14px rgba(109, 94, 252, 0.3);
+}
+
+:root[data-theme='dark'] .button--primary {
+  box-shadow: 0 4px 18px rgba(139, 127, 255, 0.3);
+}
+
+:root[data-theme='dark'] .button--primary:hover {
+  box-shadow: 0 6px 28px rgba(139, 127, 255, 0.42);
+}
+
+.theme-toggle:focus-visible,
+.button:focus-visible {
+  outline: none;
+  box-shadow: var(--control-focus-ring), var(--control-shadow-hover);
+}
+
+.button--primary:focus-visible {
+  outline: none;
+  box-shadow: var(--control-focus-ring), 0 6px 24px rgba(109, 94, 252, 0.4);
+}
+
+:root[data-theme='dark'] .button--primary:focus-visible {
+  box-shadow: var(--control-focus-ring), 0 6px 28px rgba(139, 127, 255, 0.38);
+}
+
+.button--danger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.35), 0 4px 18px rgba(220, 38, 38, 0.25);
+}
+
+:root[data-theme='dark'] .button--danger:focus-visible {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.35), 0 4px 20px rgba(248, 113, 113, 0.2);
 }
 
 .form-grid {
@@ -401,11 +777,15 @@ button {
   font: inherit;
 }
 
-input:focus,
-select:focus,
-button:focus {
-  outline: 2px solid rgba(109, 94, 252, 0.35);
-  outline-offset: 2px;
+
+.search-field:hover {
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+  box-shadow: var(--control-shadow-hover);
+}
+
+.search-field:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--control-focus-ring), var(--control-shadow-hover);
 }
 
 @media (max-width: 1080px) {
